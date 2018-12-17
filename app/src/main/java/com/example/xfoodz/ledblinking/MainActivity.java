@@ -15,15 +15,9 @@ import java.util.List;
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int INTERVAL_BETWEEN_BLINKS_MS = 1000;
-
     private Handler mHandler = new Handler();
     private Gpio mLedGpio;
-    private Gpio mLedGpio1;
-    private Gpio mLedGpio2;
     private boolean mLedState = false;
-
-    private static final String PWM_NAME = "PWM1";
-    private Pwm mPwm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,22 +30,10 @@ public class MainActivity extends Activity {
         } else {
             Log.i(TAG, "List of available ports: " + portList);
         }
-
-        try {
-            mPwm = manager.openPwm(PWM_NAME);
-            initializePwm(mPwm);
-        } catch (IOException e) {
-            Log.w(TAG, "Unable to access PWM", e);
-        }
-
         try{
-            String pinName = "BCM26";
+            String pinName = "BCM6";
             mLedGpio = PeripheralManager.getInstance().openGpio(pinName);
             mLedGpio.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
-            mLedGpio1 = PeripheralManager.getInstance().openGpio("BCM12");
-            mLedGpio1.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
-            mLedGpio2 = PeripheralManager.getInstance().openGpio("BCM16");
-            mLedGpio2.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
             mHandler.post(mBlinkRunnable);
         }
         catch(IOException e){
@@ -70,15 +52,6 @@ public class MainActivity extends Activity {
         } finally {
             mLedGpio = null;
         }
-
-        if (mPwm != null) {
-            try {
-                mPwm.close();
-                mPwm = null;
-            } catch (IOException e) {
-                Log.w(TAG, "Unable to close PWM", e);
-            }
-        }
     }
 
     private Runnable mBlinkRunnable = new Runnable() {
@@ -95,13 +68,4 @@ public class MainActivity extends Activity {
                 Log.e(TAG, "Error on PeripheralIO API", e);
             }
         }
-    };
-
-    public void initializePwm(Pwm pwm) throws IOException {
-        pwm.setPwmFrequencyHz(120);
-        pwm.setPwmDutyCycle(10);
-
-        // Enable the PWM signal
-        pwm.setEnabled(true);
-    }
 }
