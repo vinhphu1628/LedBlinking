@@ -7,10 +7,8 @@ import android.util.Log;
 
 import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.PeripheralManager;
-import com.google.android.things.pio.Pwm;
 
 import java.io.IOException;
-import java.util.List;
 
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -22,14 +20,6 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        PeripheralManager manager = PeripheralManager.getInstance();
-        List<String> portList = manager.getPwmList();
-        if (portList.isEmpty()) {
-            Log.i(TAG, "No PWM port available on this device.");
-        } else {
-            Log.i(TAG, "List of available ports: " + portList);
-        }
         try{
             String pinName = "BCM6";
             mLedGpio = PeripheralManager.getInstance().openGpio(pinName);
